@@ -28,7 +28,55 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-blue-300 to-blue-500 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
       <div className="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-2xl p-8 backdrop-blur-md border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col items-center">
-          <img src="/src/asset/MapMyNation.svg" alt="Logo" className="w-10 h-10 mb-2 animate-bounce" />
+        <svg 
+            className="w-16 h-16 mb-2 animate-float text-blue-600 dark:text-blue-400" 
+            viewBox="0 0 100 100" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Earth base */}
+            <circle cx="50" cy="50" r="45" fill="#1a73e8" />
+            
+            {/* Simplified continents */}
+            {/* North America */}
+            <path d="M20 30 Q25 25 30 30 Q35 35 40 30 Q45 25 50 30 Q55 35 60 30 Q65 25 70 30 
+                    L75 40 L70 50 L65 55 L60 50 L55 45 L50 50 L45 45 L40 40 L35 35 L30 40 L25 35 Z" 
+                  fill="#34a853" stroke="#2d7d46" strokeWidth="0.5" />
+            
+            {/* South America */}
+            <path d="M40 55 L45 60 L50 65 L55 70 L60 75 L65 70 L70 65 L65 60 L60 55 L55 50 L50 55 Z" 
+                  fill="#34a853" stroke="#2d7d46" strokeWidth="0.5" />
+            
+            {/* Africa */}
+            <path d="M60 35 L65 40 L70 45 L75 50 L80 55 L75 60 L70 65 L65 70 L60 65 L55 60 L50 55 
+                    L45 50 L50 45 L55 40 Z" 
+                  fill="#34a853" stroke="#2d7d46" strokeWidth="0.5" />
+            
+            {/* Europe */}
+            <path d="M55 25 L60 30 L65 25 L70 30 L75 25 L70 20 L65 15 L60 20 Z" 
+                  fill="#34a853" stroke="#2d7d46" strokeWidth="0.5" />
+            
+            {/* Asia */}
+            <path d="M70 20 L75 25 L80 30 L85 35 L90 40 L85 45 L80 50 L75 55 L70 50 L65 45 L70 40 
+                    L65 35 L60 30 L65 25 Z" 
+                  fill="#34a853" stroke="#2d7d46" strokeWidth="0.5" />
+            
+            {/* Australia */}
+            <path d="M80 60 L85 65 L90 70 L85 75 L80 70 L75 65 Z" 
+                  fill="#34a853" stroke="#2d7d46" strokeWidth="0.5" />
+            
+            {/* Cloud effects */}
+            <ellipse cx="30" cy="25" rx="5" ry="3" fill="rgba(255,255,255,0.7)" />
+            <ellipse cx="70" cy="20" rx="7" ry="4" fill="rgba(255,255,255,0.7)" />
+            <ellipse cx="60" cy="70" rx="6" ry="3" fill="rgba(255,255,255,0.7)" />
+            
+            {/* Grid lines */}
+            <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" fill="none" />
+            <path d="M5 50 H95" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
+            <path d="M50 5 V95" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
+            
+            {/* Shining effect */}
+            <circle cx="70" cy="30" r="10" fill="rgba(255,255,255,0.15)" />
+          </svg>
           <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             Sign in 
           </h2>
