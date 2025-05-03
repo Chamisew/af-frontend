@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-blue-300 to-blue-500 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-500">
       <div className="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-2xl p-8 backdrop-blur-md border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col items-center">
-          <img src="/src/asset/MapMyNation.svg" alt="Logo" className="w-16 h-16 mb-2 animate-bounce" />
+          <img src="/src/asset/MapMyNation.svg" alt="Logo" className="w-10 h-10 mb-2 animate-bounce" />
           <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             Sign in 
           </h2>
