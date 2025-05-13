@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { countryService, Country } from '../services/countryService';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { LanguageFilter } from '../components/LanguageFilter';
@@ -14,23 +14,46 @@ export const HomePage: React.FC = () => {
   const [availableLanguages, setAvailableLanguages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
-  useEffect(() => {
-    fetchCountries();
-    // eslint-disable-next-line
-  }, [selectedRegion, selectedLanguage]);
+  // Helper to update URL query parameters
+  const updateQueryParams = (params: { search?: string; region?: string; language?: string }) => {
+    const query = new URLSearchParams();
+    if (params.search) query.set('search', params.search);
+    if (params.region && params.region !== 'All') query.set('region', params.region);
+    if (params.language) query.set('language', params.language);
+    navigate(`${location.pathname}?${query.toString()}`, { replace: true });
+  };
 
-  const fetchCountries = async () => {
+  // Initialize state from URL query parameters
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const search = query.get('search') || '';
+    const region = query.get('region') || 'All';
+    const language = query.get('language') || '';
+
+    setSearchTerm(search);
+    setSelectedRegion(region);
+    setSelectedLanguage(language);
+
+    // Fetch countries based on initial query params
+    fetchCountries(search, region, language);
+    // eslint-disable-next-line
+  }, []);
+
+  const fetchCountries = async (search: string = searchTerm, region: string = selectedRegion, language: string = selectedLanguage) => {
     try {
       setLoading(true);
       let data: Country[];
-      if (selectedLanguage) {
-        data = await countryService.getCountriesByLanguage(selectedLanguage);
-      } else if (selectedRegion === 'All') {
+      if (search) {
+        data = await countryService.getCountryByName(search);
+      } else if (language) {
+        data = await countryService.getCountriesByLanguage(language);
+      } else if (region === 'All') {
         data = await countryService.getAllCountries();
       } else {
-        data = await countryService.getCountriesByRegion(selectedRegion);
+        data = await countryService.getCountriesByRegion(region);
       }
       setCountries(data);
 
@@ -52,6 +75,7 @@ export const HomePage: React.FC = () => {
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
+    updateQueryParams({ search: value, region: selectedRegion, language: selectedLanguage });
     if (value) {
       try {
         const data = await countryService.getCountryByName(value);
@@ -61,18 +85,23 @@ export const HomePage: React.FC = () => {
         console.error('Error searching countries:', error);
       }
     } else {
-      fetchCountries();
+      fetchCountries(value, selectedRegion, selectedLanguage);
     }
   };
 
   const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedRegion(e.target.value);
+    const value = e.target.value;
+    setSelectedRegion(value);
     setSelectedLanguage('');
+    updateQueryParams({ search: searchTerm, region: value, language: '' });
+    fetchCountries(searchTerm, value, '');
   };
 
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
     setSelectedRegion('All');
+    updateQueryParams({ search: searchTerm, region: 'All', language });
+    fetchCountries(searchTerm, 'All', language);
   };
 
   const handleCountryClick = (country: Country) => {
@@ -140,7 +169,10 @@ export const HomePage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         {loading ? (
           <div className="flex justify-center items-center h-72">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-400 border-t-transparent"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-400 border-t-transparent"
+                 role="status"
+                 aria-label="Loading"
+            ></div>
           </div>
         ) : countries.length === 0 ? (
           <div className="text-center py-16">
@@ -171,7 +203,7 @@ export const HomePage: React.FC = () => {
                   <h3 className="text-lg font-bold text-blue-800 dark:text-blue-200 mb-1 text-center">{country.name.common}</h3>
                   {/* Region & Population */}
                   <div className="text-sm text-gray-600 dark:text-gray-300 mb-2 text-center">
-                    {country.region} &middot; Pop: {country.population.toLocaleString()}
+                    {country.region} · Pop: {country.population.toLocaleString()}
                   </div>
                   {/* Languages */}
                   <div className="flex flex-wrap justify-center gap-1 mb-3">
