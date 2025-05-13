@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -13,7 +13,7 @@ import { HomePage } from './pages/HomePage';
 import LandingPage from './pages/LandingPage';
 import { CountryDetailPage } from './pages/CountryDetailPage';
 import { FavoritesPage } from './pages/FavoritesPage';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Navigation = () => {
   const { currentUser, logout } = useAuth();
@@ -186,50 +186,73 @@ const Navigation = () => {
 };
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { currentUser } = useAuth();
+
+  // Save current route to localStorage when it changes
+  useEffect(() => {
+    // Don't save auth routes
+    if (!['/login', '/signup', '/reset-password'].includes(location.pathname)) {
+      localStorage.setItem('lastRoute', location.pathname);
+    }
+  }, [location.pathname]);
+
+  // Handle initial route restoration
+  useEffect(() => {
+    const savedRoute = localStorage.getItem('lastRoute');
+    
+    // If we have a saved route and user is logged in
+    if (savedRoute && currentUser) {
+      // Only navigate if we're not already on that route
+      if (savedRoute !== location.pathname) {
+        navigate(savedRoute, { replace: true });
+      }
+    }
+  }, [currentUser]); // Only run when auth state changes
+
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <ThemeProvider>
-        <AuthProvider>
-          <FavoritesProvider>
-            <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-              <Navigation />
-              <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route
-                    path="/home"
-                    element={
-                      <ProtectedRoute>
-                        <HomePage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/country/:code"
-                    element={
-                      <ProtectedRoute>
-                        <CountryDetailPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/favorites"
-                    element={
-                      <ProtectedRoute>
-                        <FavoritesPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Routes>
-              </main>
-            </div>
-          </FavoritesProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <FavoritesProvider>
+          <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+            <Navigation />
+            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route
+                  path="/home"
+                  element={
+                    <ProtectedRoute>
+                      <HomePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/country/:code"
+                  element={
+                    <ProtectedRoute>
+                      <CountryDetailPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/favorites"
+                  element={
+                    <ProtectedRoute>
+                      <FavoritesPage />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </main>
+          </div>
+        </FavoritesProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

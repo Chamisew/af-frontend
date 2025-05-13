@@ -25,7 +25,7 @@ export const FavoritesPage: React.FC = () => {
             You haven't added any countries to your favorites. Start exploring and tap the heart to save your favorite nations!
           </p>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/home')}
             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-full font-semibold shadow-lg hover:scale-105 transition"
           >
             Browse Countries
